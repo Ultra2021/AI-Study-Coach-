@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "AI Study Coach",
+    "slug": "ai-study-coach",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#667eea"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aistudycoach.app"
+    },
+    "android": {
+      "package": "com.aistudycoach.app"
+    },
+    "scheme": "aistudycoach"
+  }
+}
