@@ -1647,7 +1647,8 @@ def internal_error(error):
 
 if __name__ == '__main__':
     # Run the Flask application
-    port = Config.API_PORT
+    # Render injects PORT env var — fall back to Config.API_PORT locally
+    port = int(os.environ.get('PORT', Config.API_PORT))
     debug = Config.DEBUG
     
     print("=" * 60)
