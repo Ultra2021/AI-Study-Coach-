@@ -16,6 +16,14 @@
     "android": {
       "package": "com.aistudycoach.app"
     },
-    "scheme": "aistudycoach"
+    "scheme": "aistudycoach",
+    "extra": {
+      "eas": {
+        "projectId": "743c0c46-ff4a-4497-9ba5-e26c5540d73f"
+      }
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker"
+    ]
   }
 }

@@ -21,6 +21,15 @@ export const API_CONFIG = {
     LOG_SESSION: '/log',
     RECOMMENDATIONS: '/api/study-recommendations',
     PREDICTIONS: '/api/study-predictions',
+    // AI endpoints
+    AI_CHAT: '/api/ai/chat',
+    AI_CHAT_HISTORY: '/api/ai/chat/history',
+    AI_STUDY_PLAN: '/api/ai/study-plan',
+    REMINDERS: '/api/ai/reminders',
+    REMINDERS_DUE: '/api/ai/reminders/due',
+    ALARMS: '/api/ai/alarms',
+    ALARMS_DUE: '/api/ai/alarms/due',
+    MONITORING_METRICS: '/api/ai/monitoring/metrics',
   },
   
   // Timeout for API requests (in milliseconds)

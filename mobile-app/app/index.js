@@ -5,37 +5,63 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   StatusBar,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_CONFIG } from '../config';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
   const handleLogin = async () => {
+    setErrorMessage('');
+    
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please enter both email and password');
+      setErrorMessage('Please enter both email and password');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage('Please enter a valid email address');
       return;
     }
 
     setLoading(true);
     try {
-      // Simple validation for demo - in production, this would call your backend API
-      if (email.includes('@')) {
-        // Navigate to dashboard
+      const response = await fetch(`${API_CONFIG.BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Store user data
+        await AsyncStorage.setItem('user', JSON.stringify(data.user));
         router.push('/dashboard');
       } else {
-        Alert.alert('Error', 'Please enter a valid email address');
+        setErrorMessage(data.error || 'Invalid email or password');
       }
     } catch (error) {
-      Alert.alert('Error', 'Login failed. Please try again.');
+      console.error('Login error:', error);
+      setErrorMessage('Cannot connect to server. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -57,7 +83,10 @@ export default function LoginScreen() {
             style={styles.input}
             placeholder="abc@test.com"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              setErrorMessage('');
+            }}
             keyboardType="email-address"
             autoCapitalize="none"
             placeholderTextColor="#999"
@@ -71,11 +100,26 @@ export default function LoginScreen() {
             style={styles.input}
             placeholder="Enter your password"
             value={password}
-            onChangeText={setPassword}
-            secureTextEntry
+            onChangeText={(text) => {
+              setPassword(text);
+              setErrorMessage('');
+            }}
+            secureTextEntry={!showPassword}
             placeholderTextColor="#999"
           />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Ionicons 
+              name={showPassword ? "eye-outline" : "eye-off-outline"} 
+              size={20} 
+              color="#666" 
+            />
+          </TouchableOpacity>
         </View>
+
+        {/* Error Message */}
+        {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
 
         {/* Login Button */}
         <TouchableOpacity
@@ -87,6 +131,14 @@ export default function LoginScreen() {
             {loading ? 'LOGGING IN...' : 'LOGIN'}
           </Text>
         </TouchableOpacity>
+
+        {/* Sign Up Link */}
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => router.push('/signup')}>
+            <Text style={styles.signupLink}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -128,6 +180,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  errorText: {
+    color: '#EF4444',
+    fontSize: 13,
+    marginTop: 10,
+    marginBottom: -10,
+  },
   loginButton: {
     backgroundColor: '#EF4444',
     borderRadius: 8,
@@ -139,6 +197,21 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: '600',
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  signupText: {
+    fontSize: 14,
+    color: '#666',
+  },
+  signupLink: {
+    fontSize: 14,
+    color: '#EF4444',
     fontWeight: '600',
   },
 });
