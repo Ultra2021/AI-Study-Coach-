@@ -9,8 +9,8 @@
 // Make sure your mobile device and computer are on the same WiFi network
 
 export const API_CONFIG = {
-  // CHANGE THIS to your computer's IP address
-  BASE_URL: 'http://192.168.1.71:5000',
+  // Render cloud backend — works without laptop
+  BASE_URL: 'https://ai-study-coach-backend-pjz3.onrender.com',
   
   // API endpoints
   ENDPOINTS: {
